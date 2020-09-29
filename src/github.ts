@@ -643,7 +643,7 @@ export class GitHub {
     }
 
     //  Actually update the files for the release:
-    const changes = await this.getChangeSet(options.updates, defaultBranch);
+    const changes = await this.getChangeSet(options.updates);
     const prNumber = await createPullRequest(
       this.octokit,
       changes,
@@ -688,10 +688,7 @@ export class GitHub {
     }
   }
 
-  private async getChangeSet(
-    updates: Update[],
-    defaultBranch: string
-  ): Promise<Changes> {
+  private async getChangeSet(updates: Update[]): Promise<Changes> {
     const changes = new Map();
     for (const update of updates) {
       let content;
@@ -701,10 +698,7 @@ export class GitHub {
           // hit GitHub again.
           content = {data: update.contents};
         } else {
-          const fileContent = await this.getFileContents(
-            update.path,
-            defaultBranch
-          );
+          const fileContent = await this.getFileContents(update.path);
           content = {data: fileContent};
         }
       } catch (err) {
@@ -824,10 +818,8 @@ export class GitHub {
     };
   }
 
-  async getFileContents(
-    path: string,
-    defaultBranch: string | undefined = undefined
-  ): Promise<GitHubFileContents> {
+  async getFileContents(path: string): Promise<GitHubFileContents> {
+    const defaultBranch = await this.getDefaultBranch(this.owner, this.repo);
     try {
       return await this.getFileContentsWithSimpleAPI(path, defaultBranch);
     } catch (err) {

@@ -248,10 +248,7 @@ describe('GitHub', () => {
         )
         .reply(200, dataAPIBlobResponse);
 
-      const fileContents = await github.getFileContents(
-        'package-lock.json',
-        'master'
-      );
+      const fileContents = await github.getFileContents('package-lock.json');
       expect(fileContents).to.have.property('content');
       expect(fileContents).to.have.property('parsedContent');
       expect(fileContents)
