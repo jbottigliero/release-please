@@ -52,9 +52,15 @@ export interface BuildOptions {
   versionFile?: string;
 }
 
+type ChangelogSection = {
+  type: string;
+  section: string;
+  hidden?: boolean;
+};
+
 export interface ReleasePROptions extends BuildOptions {
   releaseType: string;
-  changelogSections?: [];
+  changelogSections?: Array<ChangelogSection>;
 }
 
 export interface ReleaseCandidate {
@@ -97,7 +103,7 @@ export class ReleasePR {
   proxyKey?: string;
   snapshot?: boolean;
   lastPackageVersion?: string;
-  changelogSections?: [];
+  changelogSections?: Array<ChangelogSection>;
 
   constructor(options: ReleasePROptions) {
     this.bumpMinorPreMajor = options.bumpMinorPreMajor || false;
@@ -281,7 +287,7 @@ export class ReleasePR {
     const title = includePackageName
       ? `chore: release ${this.packageName} ${version}`
       : `chore: release ${version}`;
-    const body = `:robot: I have created a release \\*beep\\* \\*boop\\* \n---\n${changelogEntry}\n\nThis PR was generated with [Release Please](https://github.com/googleapis/release-please).`;
+    const body = `:robot: I have created a release \\*beep\\* \\*boop\\* \n---\n${changelogEntry}\n\nThis PR was generated with [Release Please](https://github.com/googleapis/release-please). See [documentation](https://github.com/googleapis/release-please#release-please).`;
     const pr: number | undefined = await this.gh.openPR({
       branch: includePackageName
         ? `release-${branchPrefix}-v${version}`
